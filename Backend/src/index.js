@@ -38,10 +38,14 @@ connectDB();
 // CORS configuration
 app.use(
   cors({
-    origin: 'http://localhost:5173', // your React app origin
-    credentials: true,               // allow cookies and credentials
+    origin: [
+      'http://localhost:5173',
+      'https://assignment-task-splitter.vercel.app',
+    ],
+    credentials: true,
   })
 );
+
 
 // Middleware: JSON, URL-encoded
 app.use(express.json());
