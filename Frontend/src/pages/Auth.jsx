@@ -100,6 +100,7 @@ export default function Auth() {
                 type="text"
                 name="name"
                 value={formData.name}
+                placeholder="John Doe"
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm sm:text-base"
@@ -115,6 +116,7 @@ export default function Auth() {
               type="email"
               name="email"
               value={formData.email}
+              placeholder="Email"
               onChange={handleChange}
               required
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm sm:text-base"
@@ -129,6 +131,7 @@ export default function Auth() {
               type="password"
               name="password"
               value={formData.password}
+              placeholder="Password"
               onChange={handleChange}
               required
               minLength={6}

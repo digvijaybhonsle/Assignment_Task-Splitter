@@ -9,9 +9,11 @@ const allowedTypes = [
   "application/vnd.ms-excel",
 ];
 
-const Upload = () => {
+export default function Upload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const validateAndSetFile = (file) => {
     if (file && allowedTypes.includes(file.type)) {
@@ -22,23 +24,22 @@ const Upload = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return toast.error("Please select a valid file");
+    if (!selectedFile) {
+      toast.error("Please select a valid file");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", selectedFile);
 
     try {
       setLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/lists/upload`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formData,
-        }
-      );
+      const token = localStorage.getItem("authToken");
+      const res = await fetch(`${API_URL}/api/lists/upload`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
 
       const data = await res.json();
       if (res.ok) {
@@ -98,6 +99,4 @@ const Upload = () => {
       </main>
     </div>
   );
-};
-
-export default Upload;
+}
