@@ -9,6 +9,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -17,7 +19,7 @@ const Dashboard = () => {
       const token = localStorage.getItem("authToken");
 
       try {
-        const response = await axios.get("http://localhost:5000/api/lists", {
+        const response = await axios.get(`${API_URL}/api/lists`, {
           headers: {
             "Content-Type": "application/json",
             ...(token && { Authorization: `Bearer ${token}` }),
@@ -47,12 +49,12 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [navigate]);
+  }, [navigate, API_URL]);
 
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        `${API_URL}/api/auth/logout`,
         {},
         {
           withCredentials: true,
@@ -87,7 +89,6 @@ const Dashboard = () => {
             Dashboard
           </motion.h1>
 
-          {/* New wrapper to align Upload and Logout separately */}
           <div className="flex flex-1 items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -111,9 +112,7 @@ const Dashboard = () => {
 
         <hr className="my-6" />
 
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4">
-          Distributed List
-        </h2>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Distributed List</h2>
 
         {loading ? (
           <div className="text-center py-20 text-gray-500">

@@ -13,10 +13,11 @@ const AgentManager = () => {
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem("authToken");
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const fetchAgents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/agents", {
+      const res = await axios.get(`${API_URL}/api/agents`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
@@ -51,14 +52,10 @@ const AgentManager = () => {
 
   const handleSave = async (id) => {
     try {
-      const res = await axios.put(
-        `http://localhost:5000/api/agents/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.put(`${API_URL}/api/agents/${id}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
       setAgents(agents.map((a) => (a._id === id ? res.data : a)));
       handleCancel();
     } catch (err) {
@@ -70,7 +67,7 @@ const AgentManager = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this agent?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/agents/${id}`, {
+      await axios.delete(`${API_URL}/api/agents/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
