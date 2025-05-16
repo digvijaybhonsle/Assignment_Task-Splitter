@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 
+
 const SimpleUploadBox = ({ onFileSelect }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];

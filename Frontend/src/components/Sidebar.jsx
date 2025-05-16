@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LayoutDashboard, Upload, Settings, UserPlus } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Sidebar = () => {
   const [user, setUser] = useState({ name: null, avatar: null, email: null });

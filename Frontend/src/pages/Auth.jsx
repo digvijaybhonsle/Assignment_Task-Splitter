@@ -1,75 +1,61 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Base API URL from env
 const API_URL = import.meta.env.VITE_API_URL || "";
 
-const Auth = () => {
+export default function Auth() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMode = () => {
-    setIsRegistering(prev => !prev);
+    setIsRegistering((prev) => !prev);
     setFormData({ name: "", email: "", password: "" });
     setMessage(null);
   };
 
-  const handleChange = e =>
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
     const endpoint = isRegistering ? "/api/auth/register" : "/api/auth/signin";
-    const url = `${API_URL}${endpoint}`;
 
     try {
-      let res;
-      if (isRegistering) {
-        res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-      } else {
-        res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email, password: formData.password }),
-        });
-      }
+      const { data } = await axios.post(
+        `${API_URL}${endpoint}`,
+        isRegistering
+          ? formData
+          : { email: formData.email, password: formData.password },
+        { headers: { "Content-Type": "application/json" }, withCredentials: true }
+      );
 
-      if (!res) throw new Error("No response from server.");
-      if (res.status === 404) throw new Error(`Endpoint not found (404): ${url}`);
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || `Error ${res.status}`);
-
-      setMessage({
-        type: "success",
-        text: data.message || (isRegistering ? "Registered! Please sign in." : "Signed in successfully!"),
-      });
+      setMessage({ type: "success", text: data.message });
 
       if (!isRegistering && data.token) {
-        // Clear old storage
         localStorage.clear();
-        // Save auth data
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("userId", data.user?._id || data.user?.id || "");
-
-        // Redirect to dashboard
-        setTimeout(() => (window.location.href = "/dashboard"), 1000);
+        navigate("/dashboard");
       } else if (isRegistering) {
-        // Switch to login mode
         setIsRegistering(false);
         setFormData({ name: "", email: "", password: "" });
       }
     } catch (err) {
       console.error("Auth error:", err);
-      setMessage({ type: "error", text: err.message || "Authentication failed" });
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        "Authentication failed";
+      setMessage({ type: "error", text: msg });
     } finally {
       setLoading(false);
     }
@@ -87,7 +73,9 @@ const Auth = () => {
           {isRegistering ? "Create Account" : "Welcome Back"}
         </h2>
         <p className="text-center text-gray-600 mb-4 text-sm sm:text-base">
-          {isRegistering ? "Sign up to get started" : "Please sign in to continue."}
+          {isRegistering
+            ? "Sign up to get started"
+            : "Please sign in to continue."}
         </p>
 
         {message && (
@@ -105,7 +93,9 @@ const Auth = () => {
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {isRegistering && (
             <div>
-              <label className="block text-gray-700 text-sm sm:text-base">Name</label>
+              <label className="block text-gray-700 text-sm sm:text-base">
+                Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -118,7 +108,9 @@ const Auth = () => {
           )}
 
           <div>
-            <label className="block text-gray-700 text-sm sm:text-base">Email</label>
+            <label className="block text-gray-700 text-sm sm:text-base">
+              Email
+            </label>
             <input
               type="email"
               name="email"
@@ -130,7 +122,9 @@ const Auth = () => {
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm sm:text-base">Password</label>
+            <label className="block text-gray-700 text-sm sm:text-base">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -160,7 +154,9 @@ const Auth = () => {
         </form>
 
         <p className="text-xs sm:text-sm text-center text-gray-600 mt-4">
-          {isRegistering ? "Already have an account?" : "Don't have an account?"}{" "}
+          {isRegistering
+            ? "Already have an account?"
+            : "Don't have an account?"}{" "}
           <button
             onClick={toggleMode}
             className="text-indigo-500 hover:underline font-medium"
@@ -171,6 +167,4 @@ const Auth = () => {
       </motion.div>
     </div>
   );
-};
-
-export default Auth;
+}

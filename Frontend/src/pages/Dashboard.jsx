@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import DistributedList from "../components/DistributedList";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
   const navigate = useNavigate();

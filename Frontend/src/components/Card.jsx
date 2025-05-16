@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Card = ({ task }) => {
   if (!task) return null;

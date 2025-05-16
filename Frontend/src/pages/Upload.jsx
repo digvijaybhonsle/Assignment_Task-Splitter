@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SimpleUploadBox from "../components/SampleUploadBox";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 const allowedTypes = [
   "text/csv",
