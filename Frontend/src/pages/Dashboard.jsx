@@ -113,7 +113,9 @@ const Dashboard = () => {
 
         <hr className="my-6" />
 
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Distributed List</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">
+          Distributed List
+        </h2>
 
         {loading ? (
           <div className="text-center py-20 text-gray-500">

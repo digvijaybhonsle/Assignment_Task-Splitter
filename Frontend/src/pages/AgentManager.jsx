@@ -125,9 +125,15 @@ const AgentManager = () => {
               </div>
             ) : (
               <div className="flex-1 min-w-0 space-y-1 text-sm">
-                <p><strong>Name:</strong> {agent.name}</p>
-                <p><strong>Email:</strong> {agent.email}</p>
-                <p><strong>Mobile:</strong> {agent.mobile}</p>
+                <p>
+                  <strong>Name:</strong> {agent.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {agent.email}
+                </p>
+                <p>
+                  <strong>Mobile:</strong> {agent.mobile}
+                </p>
               </div>
             )}
 

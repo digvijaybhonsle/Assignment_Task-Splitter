@@ -58,7 +58,6 @@ export default function Upload() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
-
       {/* Main content */}
       <main className="flex flex-1 flex-col items-center justify-center p-6 sm:p-10 md:p-12 lg:p-16">
         <motion.h1
@@ -69,9 +68,9 @@ export default function Upload() {
           Upload Task File
         </motion.h1>
         <p className="text-gray-600 mb-8 max-w-md text-center text-sm sm:text-base px-4">
-          Click below to upload a{" "}
-          <strong>.csv</strong>, <strong>.xlsx</strong>, or <strong>.xls</strong>{" "}
-          file containing the task data to be distributed among agents.
+          Click below to upload a <strong>.csv</strong>, <strong>.xlsx</strong>,
+          or <strong>.xls</strong> file containing the task data to be
+          distributed among agents.
         </p>
 
         {/* Upload Box */}

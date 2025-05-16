@@ -8,7 +8,11 @@ const API_URL = import.meta.env.VITE_API_URL || "";
 
 export default function Auth() {
   const [isRegistering, setIsRegistering] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,7 +39,10 @@ export default function Auth() {
         isRegistering
           ? formData
           : { email: formData.email, password: formData.password },
-        { headers: { "Content-Type": "application/json" }, withCredentials: true }
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
       );
 
       setMessage({ type: "success", text: data.message });
@@ -52,9 +59,7 @@ export default function Auth() {
     } catch (err) {
       console.error("Auth error:", err);
       const msg =
-        err.response?.data?.message ||
-        err.message ||
-        "Authentication failed";
+        err.response?.data?.message || err.message || "Authentication failed";
       setMessage({ type: "error", text: msg });
     } finally {
       setLoading(false);
