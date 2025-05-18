@@ -3,6 +3,7 @@ import DistributedList from "../components/DistributedList";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
+import toast, { Toaster } from "react-hot-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -50,35 +51,40 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [navigate, API_URL]);
+  }, [API_URL]);
 
   const handleLogout = async () => {
     try {
       await axios.post(
         `${API_URL}/api/auth/logout`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
-      // Clear localStorage items
       localStorage.removeItem("authToken");
       localStorage.removeItem("userId");
 
-      // Redirect to login
-      navigate("/auth");
+      toast.success("Logged out successfully!", { position: "top-center", duration: 2000 });
+      setTimeout(() => navigate("/auth"), 2000);
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.", { position: "top-center", duration: 2000 });
     }
   };
 
-  const handleUploadClick = () => {
-    navigate("/upload");
-  };
+  const handleUploadClick = () => navigate("/upload");
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 relative">
+      {/* Global Toaster */}
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: { position: "top-center" },
+          error: { position: "top-center" }
+        }}
+      />
+
       <main className="flex-1 w-full px-4 py-6 sm:px-6 md:px-8 overflow-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <motion.h1
@@ -118,9 +124,7 @@ const Dashboard = () => {
         </h2>
 
         {loading ? (
-          <div className="text-center py-20 text-gray-500">
-            Loading distribution...
-          </div>
+          <div className="text-center py-20 text-gray-500">Loading distribution...</div>
         ) : error ? (
           <div className="text-center py-20 text-red-500">Error: {error}</div>
         ) : (

@@ -2,25 +2,21 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 // Base API URL from env
 const API_URL = import.meta.env.VITE_API_URL || "";
 
 export default function Auth() {
   const [isRegistering, setIsRegistering] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [message, setMessage] = useState(null);
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const toggleMode = () => {
     setIsRegistering((prev) => !prev);
     setFormData({ name: "", email: "", password: "" });
-    setMessage(null);
+    toast.dismiss();
   };
 
   const handleChange = (e) =>
@@ -29,38 +25,46 @@ export default function Auth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
+    toast.dismiss();
 
     const endpoint = isRegistering ? "/api/auth/register" : "/api/auth/signin";
-
     try {
       const { data } = await axios.post(
         `${API_URL}${endpoint}`,
         isRegistering
           ? formData
           : { email: formData.email, password: formData.password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
-      setMessage({ type: "success", text: data.message });
+      console.log("Auth response:", data);
+      const successText = data.message
+        || (isRegistering
+          ? "Registered successfully! Please sign in."
+          : "Signed in successfully!");
+
+      toast.success(successText, { position: "top-center", duration: 2000 });
 
       if (!isRegistering && data.token) {
-        localStorage.clear();
-        localStorage.setItem("authToken", data.token);
-        localStorage.setItem("userId", data.user?._id || data.user?.id || "");
-        navigate("/dashboard");
+        setTimeout(() => {
+          localStorage.clear();
+          localStorage.setItem("authToken", data.token);
+          localStorage.setItem("userId", data.user?._id || data.user?.id || "");
+          navigate("/dashboard");
+        }, 2000);
       } else if (isRegistering) {
-        setIsRegistering(false);
-        setFormData({ name: "", email: "", password: "" });
+        setTimeout(() => {
+          setIsRegistering(false);
+          setFormData({ name: "", email: "", password: "" });
+        }, 2000);
       }
     } catch (err) {
       console.error("Auth error:", err);
-      const msg =
-        err.response?.data?.message || err.message || "Authentication failed";
-      setMessage({ type: "error", text: msg });
+      const errMsg =
+        err.response?.data?.message
+        || err.message
+        || "Authentication failed";
+      toast.error(errMsg, { position: "top-center", duration: 3000 });
     } finally {
       setLoading(false);
     }
@@ -68,6 +72,13 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-100">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: { position: "top-center" },
+          error: { position: "top-center" }
+        }}
+      />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -83,18 +94,6 @@ export default function Auth() {
             : "Please sign in to continue."}
         </p>
 
-        {message && (
-          <div
-            className={`mb-4 p-3 rounded-lg text-sm font-medium ${
-              message.type === "success"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {isRegistering && (
             <div>
@@ -104,8 +103,8 @@ export default function Auth() {
               <input
                 type="text"
                 name="name"
-                value={formData.name}
                 placeholder="John Doe"
+                value={formData.name}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm sm:text-base"
@@ -120,8 +119,8 @@ export default function Auth() {
             <input
               type="email"
               name="email"
-              value={formData.email}
               placeholder="Email"
+              value={formData.email}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm sm:text-base"
@@ -134,9 +133,9 @@ export default function Auth() {
             </label>
             <input
               type="password"
-              name="password"
-              value={formData.password}
+                name="password"
               placeholder="Password"
+              value={formData.password}
               onChange={handleChange}
               required
               minLength={6}

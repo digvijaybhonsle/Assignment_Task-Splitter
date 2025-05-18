@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AddAgent() {
   const [form, setForm] = useState({ name: '', email: '', mobile: '', password: '' });
@@ -25,6 +26,7 @@ export default function AddAgent() {
       );
 
       setMsg({ type: 'success', text: res.data.message || 'Agent created!' });
+      toast.success(res.data.message || 'Agent created!');
       setForm({ name: '', email: '', mobile: '', password: '' });
       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
@@ -34,6 +36,13 @@ export default function AddAgent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-6 sm:px-6">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          success: { position: "top-center" },
+          error: { position: "top-center" }
+        }}
+      />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
